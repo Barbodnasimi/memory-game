@@ -43,6 +43,11 @@ body {
 
 .memory-card .front-face {
     position: absolute;
+    /* backface-visibility: hidden; */
+    /* transform: rotateY(180deg); */
+}
+
+.front-rotate {
     backface-visibility: hidden;
     transform: rotateY(180deg);
 }
