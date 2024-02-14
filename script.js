@@ -1,68 +1,47 @@
-const cards = document.querySelectorAll('.memory-card');
+const resetBtn = document.querySelector('button');
+const cardBox = document.querySelector('.game');
+const emojis = ["😊","😊","❤","❤","👌","👌","😎","😎","🤢","🤢","✔","✔","🎁","🎁","🎂","🎂"];
 
-let hasFlippedCard = false;
-let firstCard, secondCard;
-let resetBtn = document.querySelector('button');
 
-function flipCard(e) {
-  let card = e.currentTarget;
-  let cardBackface = card.querySelector('.back-face')
+let shufEmojis = emojis.sort(() => (Math.random() > 0.5) ? 1 : -1);
 
-  // if (card.id === firstCard.id) return;
+// Function to handle the click event
+function classHandler() {
+  this.classList.add('boxOpen');
 
-  if (!hasFlippedCard) {
-    // First card flipped
-    hasFlippedCard = true;
-    firstCard = card;
-    cardBackface.textContent = cardBackface.id;
-  } else {
-    // Second card flipped
-    secondCard = card;
-    cardBackface.textContent = cardBackface.id;
-    checkForMatch();
-  }
+  setTimeout(() => {
+    let boxOpen = document.querySelectorAll('.boxOpen');
+
+    if (boxOpen.length > 1) {
+      if (boxOpen[0].innerHTML === boxOpen[1].innerHTML) {
+        boxOpen.forEach(box => {
+          box.classList.add('boxMatch');
+          box.classList.remove('boxOpen');
+          box.removeEventListener('click', classHandler);
+        });
+
+        if (document.querySelectorAll('.boxMatch').length === emojis.length) {
+          alert("GG");
+        }
+      } else {
+        boxOpen.forEach(box => {
+          box.classList.remove('boxOpen');
+        });
+      }
+    }
+  }, 1000);
+}
+
+// Create and append the boxes
+for (let i = 0; i < shufEmojis.length; i++) {
+  let box = document.createElement('div');
+  box.className = 'item';
+  box.innerHTML = shufEmojis[i];
+  box.addEventListener("click", classHandler);
+  cardBox.appendChild(box);
 }
 
 
-function checkForMatch() {
-  let isMatch = firstCard.querySelector('.back-face').id === secondCard.querySelector('.back-face').id;
-  if (isMatch) {
-    disableCards()
-  } else {
-    setTimeout(unflipCards, 1000);
-  }
-}
-
-function disableCards() {
-  firstCard.removeEventListener('click', flipCard);
-  secondCard.removeEventListener('click', flipCard);
-  resetBoard();
-}
-
-function unflipCards() {
-  let firstCardBackface = firstCard.querySelector('.back-face'),
-  secondCardBackface = secondCard.querySelector('.back-face');
-  
-  // Reset text content to back face
-  firstCardBackface.textContent = firstCardBackface.title;
-  secondCardBackface.textContent = secondCardBackface.title;
-  resetBoard();
-}
-
-function resetBoard() {
-  hasFlippedCard = false;
-  firstCard = null;
-  secondCard = null;
-}
-
-// Define the event listener function
-// function cardClickListener(e) {
-//     flipCard(e.target);
-// }
-
-cards.forEach(card => card.addEventListener('click', flipCard));
-
-// resetBtn.addEventListener("click" , ()=>{
-//     resetBoard()
-//     undisableCards()
-// })
+resetBtn.addEventListener("click", () => {
+  window.location.reload();
+});
